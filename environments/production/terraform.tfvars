@@ -8,6 +8,9 @@ nsg_name             = "NSG-Official"
 ssh_key_name         = "Azure_driftking"
 ssh_username         = "azureuser"
 
+subscription_id = "91c45309-2c92-4828-b2b6-acbdb19d8942"
+tenant_id       = "2282ef6d-b681-4472-ac13-0ae1ff81f2f3"
+
 vm_specs = [
   { name = "Master",   size = "Standard_F4s_v2" },
   { name = "Jenkins",  size = "Standard_F4s_v2" },
