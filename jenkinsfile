@@ -1,0 +1,29 @@
+post {
+    success {
+      emailext (
+        subject: "Jenkins SUCCESS: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
+        body: """
+        <p>Hi Chaitanya,</p>
+        <p>Your Jenkins job <b>${env.JOB_NAME} #${env.BUILD_NUMBER}</b> succeeded.</p>
+        <p>Check details: <a href="${env.BUILD_URL}">${env.BUILD_URL}</a></p>
+        """,
+        to: "karmanotorious@gmail.com",
+        mimeType: 'text/html'
+      )
+    }
+    failure {
+      emailext (
+        subject: "Jenkins FAILED: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
+        body: """
+        <p>Hi Chaitanya,</p>
+        <p>Your Jenkins job <b>${env.JOB_NAME} #${env.BUILD_NUMBER}</b> failed ❌.</p>
+        <p>Check logs here: <a href="${env.BUILD_URL}">${env.BUILD_URL}</a></p>
+        """,
+        to: "karmanotorious@gmail.com",
+        mimeType: 'text/html'
+      )
+    }
+    always {
+      sh 'rm -f azureauth.json || true'
+    }
+}
