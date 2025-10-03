@@ -1,0 +1,31 @@
+----------------------------------------------------------------------
+Terraform Files to IGNORE (Security, Size, and Local Cache)
+----------------------------------------------------------------------
+1. Directory containing provider binaries (like the 211MB .exe)
+and local module cache.
+.terraform/
+
+2. Local State Files (Contains sensitive resource data)
+Aapka official state remote Azure Storage mein hai, isliye local state ignore karein.
+*.tfstate
+*.tfstate.backup
+
+3. Plan Files (Blueprint of changes)
+*.tfplan
+
+4. Terraform CLI configuration file
+terraform.rc
+
+5. Dependency Lock File (often ignored for portability)
+.terraform.lock.hcl
+
+----------------------------------------------------------------------
+Other Files to Ignore
+----------------------------------------------------------------------
+Log files
+.log
+npm-debug.log
+
+OS and Editor specific files
+.DS_Store
+Thumbs.db
