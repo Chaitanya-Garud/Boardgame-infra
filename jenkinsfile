@@ -1,0 +1,87 @@
+/**
+ * ROBUST DECLARATIVE JENKINS PIPELINE FOR AZURE TERRAFORM
+ * Terraform commands now run directly in the repository root (/Boardgame-infra), 
+ * matching the user's local working directory structure.
+ */
+pipeline {
+    agent any
+
+    parameters {
+        // User ko build shuru karne se pehle action choose karne ka option.
+        choice(name: 'ACTION', choices: ['plan', 'apply', 'destroy'], description: 'Terraform action to run')
+    }
+
+    stages {
+        stage('Checkout Code') {
+            steps {
+                echo 'GitHub repository se code checkout kiya ja raha hai...'
+                // Clean URL use karein.
+                checkout([
+                    $class: 'GitSCM', 
+                    branches: [[name: 'main']], 
+                    userRemoteConfigs: [[url: 'https://github.com/Chaitanya-Garud/Boardgame-infra.git']]
+                ])
+            }
+        }
+        
+        stage('Azure Login') {
+            steps {
+                script {
+                    echo 'Securely retrieving credentials and logging into Azure...'
+                    
+                    withCredentials([
+                        string(credentialsId: 'azure-client-id', variable: 'CLIENT_ID'),
+                        string(credentialsId: 'azure-client-secret', variable: 'CLIENT_SECRET'),
+                        string(credentialsId: 'azure-subscription-id', variable: 'SUBSCRIPTION_ID'),
+                        string(credentialsId: 'azure-tenant-id', variable: 'TENANT_ID')
+                    ]) {
+                        sh """
+                        # 1. Login with Service Principal (SPN)
+                        az login --service-principal -u \${CLIENT_ID} -p \${CLIENT_SECRET} --tenant \${TENANT_ID} --output none
+                        
+                        # 2. Set the active subscription context 
+                        az account set --subscription \${SUBSCRIPTION_ID}
+                        
+                        echo "Login successful. Subscription context set."
+                        """
+                    }
+                }
+            }
+        }
+
+        stage('Terraform Init') {
+            steps {
+                echo 'Terraform initialize aur remote backend configure kiya ja raha hai...'
+                // FIX: Commands are run in the root directory.
+                sh 'terraform init -reconfigure' 
+            }
+        }
+
+        stage('Terraform Plan/Apply/Destroy') {
+            steps {
+                echo "Chalaayi jaane wali Terraform action: ${params.ACTION}"
+                
+                // FIX: Commands are run in the root directory.
+                sh """
+                case "${params.ACTION}" in
+                    plan)
+                        terraform plan
+                        ;;
+                    apply)
+                        terraform apply --auto-approve
+                        ;;
+                    destroy)
+                        terraform destroy --auto-approve
+                        ;;
+                    *)
+                        echo "Invalid action: ${params.ACTION}"
+                        exit 1
+                        ;;
+                esac
+                """
+            }
+        }
+    }
+    
+    // Azure session will remain active on the Jenkins agent as requested.
+}
