@@ -57,28 +57,28 @@ variable "vm_specs" {
       public_ip = true
     },
     Slave1 = {
-      size      = "B2s"
+      size      = "Standard_B2s"
       notes     = "Worker node"
       public_ip = true
     },
     Slave2 = {
       # ⚠️ UPDATED VM SIZE HERE!
-      size      = "B2s"
+      size      = "Standard_B2s"
       notes     = "Worker node"
       public_ip = true
     },
     Sonarqube = {
-      size      = "B2s"
+      size      = "Standard_B2s"
       notes     = "Code quality"
       public_ip = true
     },
     Nexus = {
-      size      = "B2s"
+      size      = "Standard_B2s"
       notes     = "Artifact repo"
       public_ip = true
     },
     Monitoring = {
-      size      = "B2s"
+      size      = "Standard_B2s"
       notes     = "Metrics/alerts"
       public_ip = true
     }
