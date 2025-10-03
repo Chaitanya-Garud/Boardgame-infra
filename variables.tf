@@ -47,12 +47,12 @@ variable "vm_specs" {
   }))
   default = {
     Master = {
-      size      = "F4s_v2"
+      size      = "Standard_F4s_v2"
       notes     = "Control node"
       public_ip = true
     },
     Jenkins = {
-      size      = "F4s_v2"
+      size      = "Standard_F4s_v2"
       notes     = "CI/CD server"
       public_ip = true
     },
