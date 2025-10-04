@@ -52,8 +52,16 @@ pipeline {
         stage('Terraform Init') {
             steps {
                 echo 'Terraform initialize aur remote backend configure kiya ja raha hai...'
-                // FIX: Commands are run in the root directory.
-                sh 'terraform init -reconfigure' 
+                // Ensure a stable temp dir and a plugin cache so provider downloads
+                // don't get removed by cleanups or interference in /tmp on the agent.
+                // Use workspace-local TMPDIR and a persistent TF_PLUGIN_CACHE_DIR.
+                sh '''
+                export TMPDIR="${WORKSPACE}/.terraform_tmp"
+                export TF_PLUGIN_CACHE_DIR="${HOME}/.terraform.d/plugin-cache"
+                mkdir -p "$TMPDIR" "$TF_PLUGIN_CACHE_DIR"
+                echo "Using TMPDIR=$TMPDIR and TF_PLUGIN_CACHE_DIR=$TF_PLUGIN_CACHE_DIR"
+                terraform init -reconfigure -upgrade
+                '''
             }
         }
 

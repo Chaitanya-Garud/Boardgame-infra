@@ -1,3 +1,5 @@
+// terraform backend and required_providers are configured in backend.tf
+
 # Create the Resource Group if it doesn't exist
 resource "azurerm_resource_group" "main" {
   name     = var.resource_group_name
